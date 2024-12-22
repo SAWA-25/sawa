@@ -1,4 +1,4 @@
-// 设置初始对话和选项
+// 初始化游戏变量
 let affection = 0; // 用于跟踪流浪者的情感变化
 
 // 更新对话框的内容
@@ -91,7 +91,7 @@ function handleChoice5() {
 
 // 选择6：不再说话，沉默离开
 function handleChoice6() {
-    updateDialogue('你选择沉默离开，流浪者也没有追上来，似乎不再在乎。');
+    updateDialogue('你选择沉默离开，流浪者也没有追上来，只是静静地看着你离开，心情似乎并没有变得更好。');
     affection -= 10;
     showOption('再回到他身边，看看他是否需要帮助。', handleChoice7);
 }
@@ -135,4 +135,11 @@ function endGame() {
 function restartGame() {
     affection = 0;
     updateDialogue('今天是流浪者的生日。你注意到他似乎有些不太一样，心情似乎有些低落。');
-    showOption('问他：“你是不是有什么不愿说的事？”
+    showOption('问他：“你是不是有什么不愿说的事？”', handleChoice1);
+    showOption('什么也不说，默默陪伴他。', handleChoice2);
+}
+
+// 页面加载时自动触发生日剧情
+window.onload = function() {
+    triggerBirthdayDialogue();
+};
