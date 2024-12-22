@@ -1,19 +1,19 @@
-// 初始化游戏变量
-let affection = 0; // 用于跟踪流浪者的情感变化
+// 游戏变量
+let affection = 0; // 流浪者的情感值
 
-// 更新对话框的内容
+// 更新对话框内容
 function updateDialogue(text) {
     const dialogueBox = document.getElementById('dialogue-box');
-    dialogueBox.innerHTML = text; // 更新对话框内容
+    dialogueBox.innerHTML = text;
 }
 
-// 清空并更新选项
+// 更新选项
 function updateOptions() {
     const optionsContainer = document.getElementById('options-container');
-    optionsContainer.innerHTML = ''; // 清空现有选项
+    optionsContainer.innerHTML = '';
 }
 
-// 显示选项
+// 显示选项按钮
 function showOption(optionText, handler) {
     const optionsContainer = document.getElementById('options-container');
     const optionButton = document.createElement('button');
@@ -23,7 +23,7 @@ function showOption(optionText, handler) {
     optionsContainer.appendChild(optionButton);
 }
 
-// 生日剧情触发
+// 触发生日剧情
 function triggerBirthdayDialogue() {
     updateDialogue('今天是流浪者的生日。你注意到他似乎有些不太一样，心情似乎有些低落。');
     showOption('问他：“你是不是有什么不愿说的事？”', handleChoice1);
@@ -49,97 +49,77 @@ function handleChoice1() {
 function handleChoice2() {
     updateDialogue('你没有打破沉默，静静地陪在流浪者身旁，似乎能感受到他内心的复杂情绪。');
     affection += 5;
-    showOption('继续陪伴他，什么也不说。', handleChoice2); // 反复选择会增加好感度
+    showOption('继续陪伴他，什么也不说。', handleChoice2);
 }
 
 // 选择3：继续询问生日
 function handleChoice3() {
     let dialogueText = '';
     if (affection > 30) {
-        dialogueText = '流浪者叹了口气，轻轻道：“我的生日对我来说并没有什么特别的意义。曾经的我，早已失去这些。”他露出一丝淡淡的笑容，仿佛回忆起了什么。';
-        affection += 10;
+        dialogueText = '流浪者叹了口气，稍微放下了防备：“今天不是一个值得庆祝的日子。”';
+        affection += 20;
     } else {
-        dialogueText = '流浪者有些不耐烦地皱了皱眉：“就算是生日，又能怎样？这对于我来说不过是个普通的日子。”';
+        dialogueText = '流浪者冷漠地摇了摇头：“你真的不懂。”';
+        affection -= 10;
+    }
+    updateDialogue(dialogueText);
+    showOption('给他一份礼物，改变气氛。', handleGiftChoice1);
+    showOption('离开，尊重他的情绪。', handleChoice4);
+}
+
+// 选择4：离开
+function handleChoice4() {
+    updateDialogue('流浪者没有阻止你离开，眼神中似乎闪过一丝复杂的情感。');
+    showOption('继续游戏', triggerBirthdayDialogue);
+}
+
+// 赠送礼物的选择
+function handleGiftChoice1() {
+    updateDialogue('你决定送给流浪者一份礼物。他似乎很惊讶，但没有拒绝。');
+    showOption('送他一件精心挑选的礼物。', handleGiftReaction1);
+    showOption('送给他一件你随手找的物品。', handleGiftReaction2);
+}
+
+// 礼物反应
+function handleGiftReaction1() {
+    let dialogueText = '';
+    if (affection > 30) {
+        dialogueText = '流浪者接过礼物，眼中闪过一丝柔和的光：“这…比我想的要好。”';
+        affection += 20;
+    } else {
+        dialogueText = '流浪者眉头皱了皱，接过礼物，语气依旧冷淡：“谢了。”';
         affection -= 5;
     }
     updateDialogue(dialogueText);
-    showOption('安慰他：“每个人都有属于自己的特别时刻，生日也不例外。”', handleChoice5);
-    showOption('不再说话，沉默地离开。', handleChoice6);
+    showOption('继续与他交流。', triggerBirthdayDialogue);
 }
 
-// 选择4：转身离开
-function handleChoice4() {
-    updateDialogue('你没有再多说什么，转身离开。流浪者没有阻止你，只是看着你的背影，微微叹息。');
-    affection -= 5;
-    showOption('回到流浪者身边，想看看他是否改变了心情。', handleChoice7);
-}
-
-// 选择5：安慰他
-function handleChoice5() {
-    let dialogueText = '';
-    if (affection > 30) {
-        dialogueText = '流浪者看了你一眼，眼神中带着些许温暖：“也许吧，你说得对。”他露出一抹真诚的笑容。';
-        affection += 15;
-    } else {
-        dialogueText = '流浪者沉默片刻，冷冷地回答：“你不懂的。”但语气中似乎少了一些敌意。';
-        affection += 5;
-    }
-    updateDialogue(dialogueText);
-    showOption('给流浪者一个礼物，作为生日的庆祝。', handleChoice8);
-    showOption('继续安慰流浪者，陪着他。', handleChoice2);
-}
-
-// 选择6：不再说话，沉默离开
-function handleChoice6() {
-    updateDialogue('你选择沉默离开，流浪者也没有追上来，只是静静地看着你离开，心情似乎并没有变得更好。');
+// 礼物反应2（不太在乎的礼物）
+function handleGiftReaction2() {
+    updateDialogue('流浪者拿起你随手递过去的礼物，眉头一皱：“就这个？”');
     affection -= 10;
-    showOption('再回到他身边，看看他是否需要帮助。', handleChoice7);
+    showOption('继续与他交流。', triggerBirthdayDialogue);
 }
 
-// 选择7：回到流浪者身边
-function handleChoice7() {
-    updateDialogue('你走回流浪者身边，他轻轻抬头，看了你一眼，似乎并不感到意外。“你还是不走？”他冷冷地问道。');
-    showOption('点点头，陪着他继续静默。', handleChoice2);
-    showOption('再次询问他，是否愿意庆祝生日。', handleChoice3);
+// 最终对话
+function finalBirthdayDialogue() {
+    updateDialogue('夜晚，流浪者看着你，眼神柔和：“今天多谢你陪我，虽然…我不喜欢这种日子。”');
+    if (affection > 50) {
+        showOption('温暖地回应：“你不孤单，我会在你身边。”', handleFinalChoice1);
+    } else {
+        showOption('冷淡地回应：“生日不过是个普通的日子。”', handleFinalChoice2);
+    }
 }
 
-// 选择8：给他一个礼物
-function handleChoice8() {
-    updateDialogue('你递给流浪者一个简单的礼物，流浪者看着你手中的东西，微微愣住。随后，他缓缓接过：“谢谢…虽然不知该如何接受。”');
-    affection += 20;
-    showOption('告诉他，这是你的心意。', handleChoice9);
-    showOption('离开，让他自己处理。', handleChoice10);
+// 最终选择1：温暖回应
+function handleFinalChoice1() {
+    updateDialogue('流浪者看着你，眼神柔软：“…谢谢。”他似乎真正感受到了你的关心。');
+    affection += 30;
+    showOption('继续游戏', triggerBirthdayDialogue);
 }
 
-// 选择9：告诉他这是你的心意
-function handleChoice9() {
-    updateDialogue('流浪者看着你，眼中闪烁着复杂的情感。最终，他微微笑了笑：“谢谢…我会记住的。”');
-    affection += 10;
-    endGame();
+// 最终选择2：冷淡回应
+function handleFinalChoice2() {
+    updateDialogue('流浪者淡淡地笑了笑：“你说得对，生日不过是个普通的日子。”');
+    showOption('继续游戏', triggerBirthdayDialogue);
 }
-
-// 选择10：离开，让他自己处理
-function handleChoice10() {
-    updateDialogue('你转身离开，流浪者没有再叫住你，只是静静地看着你离开，心情似乎并没有变得更好。');
-    affection -= 5;
-    endGame();
-}
-
-// 游戏结束
-function endGame() {
-    updateDialogue('生日的日子渐渐结束，流浪者依旧保持沉默，仿佛回到了他独自的世界。无论你做了什么，今天的他依然没有得到真正的安慰。');
-    showOption('重新开始', restartGame);
-}
-
-// 重新开始
-function restartGame() {
-    affection = 0;
-    updateDialogue('今天是流浪者的生日。你注意到他似乎有些不太一样，心情似乎有些低落。');
-    showOption('问他：“你是不是有什么不愿说的事？”', handleChoice1);
-    showOption('什么也不说，默默陪伴他。', handleChoice2);
-}
-
-// 页面加载时自动触发生日剧情
-window.onload = function() {
-    triggerBirthdayDialogue();
-};
