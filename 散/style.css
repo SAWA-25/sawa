@@ -1,41 +1,72 @@
+/* 通用页面样式 */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f0f0f0;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #2d2d2d;
+    color: white;
 }
 
-#game-container {
-    width: 80%;
-    max-width: 600px;
+/* 游戏容器 */
+.game-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* 角色背景图片 */
+.character-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://pic.imgdb.cn/item/67688e2bd0e0a243d4e82588.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px);  /* 增加模糊效果 */
+    z-index: -1;  /* 让背景图在下面 */
+}
+
+/* 对话框样式 */
+.dialogue-box {
+    position: absolute;
+    bottom: 10%;
+    left: 5%;
+    width: 90%;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    font-size: 18px;
+    line-height: 1.5;
     text-align: center;
 }
 
-#dialogue-box {
-    font-size: 18px;
-    padding: 20px;
-    background-color: #f8f8f8;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    min-height: 150px;
+/* 选项按钮样式 */
+.options-container {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-#options-container .button {
-    padding: 10px 20px;
-    margin: 5px;
-    background-color: #4CAF50;
-    color: white;
+.button {
+    background-color: #00A1E4;
     border: none;
+    padding: 15px;
+    font-size: 18px;
+    color: white;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
-    width: 100%;
+    transition: background-color 0.3s;
 }
 
-#options-container .button:hover {
-    background-color: #45a049;
+.button:hover {
+    background-color: #005D77;
 }
