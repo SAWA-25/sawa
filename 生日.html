@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>晨曦与风铃的絮语</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            height: 100%;
+            overflow: hidden;
+            font-family: '微软雅黑', sans-serif;
+            background: #000;
+            position: fixed;
+            width: 100%;
+        }
+
+        #game-container {
+            width: 100%;
+            height: 100%;
+            background: url('https://pic.imgdb.cn/item/67688e2bd0e0a243d4e82588.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+        }
+
+        #dialogue-container {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        #dialogue-box {
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            line-height: 1.8;
+            position: relative;
+            margin: 0 auto;
+            max-width: 800px;
+            min-height: 120px;
+            transition: opacity 0.3s ease;
+        }
+
+        #mood-indicator {
+            position: absolute;
+            top: -30px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            color: #fff;
+            transition: opacity 0.3s ease;
+        }
+
+        #choices-container {
+            width: 100%;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .choice-btn {
+            width: 90%;
+            max-width: 600px;
+            background: rgba(41, 128, 185, 0.9);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .choice-btn:active {
+            transform: scale(0.98);
+            background: rgba(52, 152, 219, 0.9);
+        }
+
+        #reset-button {
+            background: rgba(192, 57, 43, 0.9);
+            margin-top: 10px;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            #dialogue-box {
+                font-size: 14px;
+                padding: 15px;
+                min-height: 100px;
+            }
+
+            .choice-btn {
+                font-size: 14px;
+                padding: 12px 15px;
+            }
+
+            #mood-indicator {
+                font-size: 12px;
+                padding: 3px 10px;
+                top: -25px;
+            }
+        }
+
+        @media (max-height: 600px) {
+            #dialogue-box {
+                min-height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="dialogue-container">
+            <div id="dialogue-box">
+                <div id="mood-indicator">心情：沉思</div>
+                <div id="dialogue-text"></div>
+            </div>
+        </div>
+        <div id="choices-container"></div>
+    </div>
+<script>
+const dialogueData = {
+    start: {
+        text: "晨曦微露，风铃轻响。须弥城的风轻轻拂过，带来沙漠的温度。阿散独立窗前，深蓝色的发丝被晨风轻抚。你——旅行者阿妄，静静地站在不远处。这个特别的日子，这位曾经的流浪者似乎比平时更加心事重重。",
+        mood: "沉思",
+        choices: [
+            {
+                text: "轻声呼唤：'阿散。'",
+                next: "call_name"
+            },
+            {
+                text: "将准备好的礼物放在他身旁的桌上",
+                next: "place_gift"
+            },
+            {
+                text: "走到他身边，一同眺望远方",
+                next: "watch_together"
+            }
+        ]
+    },
+
+    // 第一条路线：呼唤名字
+    call_name: {
+        text: "听到这个名字，阿散的身形微微一僵。他转过身，蓝紫色的眼眸中闪过一丝波动：'怎么，今天这么早就来打扰我？'话虽如此，他的语气却比平时柔和了几分。",
+        mood: "微妙",
+        choices: [
+            {
+                text: "说：'因为今天是特别的日子。'",
+                next: "mention_special"
+            },
+            {
+                text: "保持沉默，注视着他",
+                next: "silent_gaze"
+            }
+        ]
+    },
+
+    mention_special: {
+        text: "'特别的日子？'阿散挑了挑眉，'你总是...'他停顿了一下，似乎在斟酌用词，'在意这些无关紧要的事。'尽管这样说，他的目光却不自觉地柔和了几分。",
+        mood: "别扭",
+        choices: [
+            {
+                text: "取出礼物：'那这个也是无关紧要的吗？'",
+                next: "give_gift"
+            },
+            {
+                text: "微笑：'对我来说很重要。'",
+                next: "express_importance"
+            }
+        ]
+    },
+
+    express_importance: {
+        text: "阿散沉默片刻，目光落在远处的沙漠上：'重要...'他的声音很轻，'为什么？'这个问题似乎更像是在自言自语。晨风轻轻拂过，带起他的发梢。",
+        mood: "思考",
+        choices: [
+            {
+                text: "回答：'因为是你接受这个名字的日子。'",
+                next: "name_acceptance"
+            },
+            {
+                text: "取出礼物：'这个，或许能回答你的问题。'",
+                next: "give_gift"
+            }
+        ]
+    },
+    name_acceptance: {
+        text: "'阿散这个名字...'他低声重复着，手指无意识地摩挲着衣角，'原来你一直记得。'他的语气中带着一丝不易察觉的温度，眼神中闪过一丝柔和的光芒。",
+        mood: "温柔",
+        choices: [
+            {
+                text: "点头：'每一个细节都记得。'",
+                next: "name_memory"
+            },
+            {
+                text: "取出礼物：'所以准备了这个。'",
+                next: "give_gift"
+            }
+        ]
+    },
+
+    silent_gaze: {
+        text: "在你平静的注视下，阿散微微皱眉：'怎么，今天连话都不说了？'他的语气中带着一丝不易察觉的困扰。那双蓝紫色的眼眸直视着你，似乎想看穿你的心思。",
+        mood: "困扰",
+        choices: [
+            {
+                text: "继续保持沉默，从怀中取出礼物",
+                next: "give_gift"
+            },
+            {
+                text: "轻声说：'在想你会不会记得今天。'",
+                next: "remember_today"
+            }
+        ]
+    },
+
+    remember_today: {
+        text: "'今天？'阿散挑了挑眉，'有什么特别的...'话说到一半，他突然停住了。蓝紫色的眼眸中闪过一丝明悟，但很快又恢复了平常的冷淡。'原来如此。'",
+        mood: "恍然",
+        choices: [
+            {
+                text: "微笑：'看来你记得。'",
+                next: "confirmed_memory"
+            },
+            {
+                text: "取出礼物：'让我帮你回忆一下。'",
+                next: "give_gift"
+            }
+        ]
+    },
+
+    confirmed_memory: {
+        text: "'呵，'阿散轻笑一声，'你以为我会忘记吗？'他转身望向窗外，'那天...你给了我这个名字。从流浪者...变成了阿散。'虽然语气依然高傲，但眼神却异常柔和。",
+        mood: "怀念",
+        choices: [
+            {
+                text: "说：'所以我带来了礼物。'",
+                next: "give_gift"
+            },
+            {
+                text: "轻声说：'能遇见你真好。'",
+                next: "express_gratitude"
+            }
+        ]
+    },
+
+    express_gratitude: {
+        text: "阿散明显愣了一下，耳尖微微泛红：'你...'他停顿了片刻，声音轻得几乎听不见，'...总是说这些让人困扰的话。'",
+        mood: "害羞",
+        choices: [
+            {
+                text: "微笑着递上礼物",
+                next: "give_gift"
+            },
+            {
+                text: "轻声说：'因为是真心话。'",
+                next: "sincere_words"
+            }
+        ]
+    },
+    // 第二条路线：放礼物
+    place_gift: {
+        text: "你将精心准备的礼物轻放在桌上。阿散依然望着窗外，但从他微微绷直的背影能看出，他已经察觉到你的存在。沙漠的晨风掠过他的发梢，带来一丝凉意。",
+        mood: "警觉",
+        choices: [
+            {
+                text: "保持沉默，转身准备离开",
+                next: "try_leave"
+            },
+            {
+                text: "站在原地，等待他的反应",
+                next: "wait_response"
+            }
+        ]
+    },
+
+    try_leave: {
+        text: "'就这样离开？'阿散的声音突然响起，带着一丝嘲讽，'放下莫名其妙的东西就想走吗？'他转过身，蓝紫色的眼眸中闪过一丝不悦。",
+        mood: "不悦",
+        choices: [
+            {
+                text: "停下脚步：'我以为你不喜欢被打扰。'",
+                next: "disturbance"
+            },
+            {
+                text: "转身面对他：'既然你开口了。'",
+                next: "face_him"
+            }
+        ]
+    },
+
+    wait_response: {
+        text: "阿散依然保持着原来的姿势，但你能感觉到他的注意力已经转向了桌上的礼物。片刻的沉默后，他终于开口：'什么时候开始，你也学会这样无声地打扰人了？'",
+        mood: "好奇",
+        choices: [
+            {
+                text: "轻声说：'因为今天很特别。'",
+                next: "special_day"
+            },
+            {
+                text: "微笑：'看来我成功引起了你的注意。'",
+                next: "attention_caught"
+            }
+        ]
+    },
+
+    attention_caught: {
+        text: "'哼。'阿散轻哼一声，但目光却始终没有离开礼物，'你倒是越来越会打扰人了，旅行者。'他的语气虽然带着抱怨，但嘴角却微微上扬。",
+        mood: "愉悦",
+        choices: [
+            {
+                text: "说：'因为这是特别的日子。'",
+                next: "special_day"
+            },
+            {
+                text: "微笑：'那就让我继续打扰你吧。'",
+                next: "continue_stay"
+            }
+        ]
+    },
+
+    continue_stay: {
+        text: "'随你便。'阿散别过头去，但耳尖却微微泛红，'反正你总是这样...任性妄为。'他的手指不自觉地触碰着礼物的包装。",
+        mood: "害羞",
+        choices: [
+            {
+                text: "说：'打开看看吧。'",
+                next: "wait_opening"
+            },
+            {
+                text: "轻声说：'这是给阿散的礼物。'",
+                next: "mention_name"
+            }
+        ]
+    },
+    // 第三条路线：一同眺望
+    watch_together: {
+        text: "你无声地走到阿散身边，与他一同望向远方。晨光为须弥城镀上一层金边，沙漠的风带着特有的温度拂过。他似乎并不介意你的靠近，但眉间仍带着一丝心事。",
+        mood: "平静",
+        choices: [
+            {
+                text: "轻声问：'在想什么？'",
+                next: "ask_thoughts"
+            },
+            {
+                text: "继续保持沉默，享受这难得的宁静",
+                next: "peaceful_moment"
+            }
+        ]
+    },
+
+    ask_thoughts: {
+        text: "'没什么。'阿散下意识地回答，但很快又补充道：'只是在想，时间过得真快。从流浪者变成阿散...一年的时间，改变了很多。'这句话似乎别有深意，他的目光依然停留在远处。",
+        mood: "感慨",
+        choices: [
+            {
+                text: "说：'是啊，从流浪者到阿散，你找到了属于自己的名字。'",
+                next: "name_reflection"
+            },
+            {
+                text: "取出礼物：'所以我带来了这个。'",
+                next: "give_gift"
+            }
+        ]
+    },
+
+    peaceful_moment: {
+        text: "沉默持续了一会儿，阿散突然开口：'你今天...很安静。'他的语气中带着一丝疑惑，似乎不太习惯你的这种状态。晨风轻轻拂过，带来一丝凉意。",
+        mood: "疑惑",
+        choices: [
+            {
+                text: "微笑：'因为不想打扰你的回忆。'",
+                next: "respect_memory"
+            },
+            {
+                text: "转身面对他：'因为今天是特别的日子。'",
+                next: "special_day_third"
+            }
+        ]
+    },
+
+    // 核心礼物剧情
+    give_gift: {
+        text: "阿散看着礼物，神情略显复杂。他的手指轻轻触碰着包装，似乎在犹豫要不要接过。'你总是...'他的声音带着一丝不易察觉的温度，'记得这些时刻。'",
+        mood: "感动",
+        choices: [
+            {
+                text: "静静等待他打开礼物",
+                next: "wait_opening"
+            },
+            {
+                text: "说：'因为这些时刻值得被记住。'",
+                next: "special_gift"
+            }
+        ]
+    },
+
+    wait_opening: {
+        text: "阿散缓缓拆开包装，动作优雅而克制。当他看到礼物的内容时，眼神突然变得深邃。'这是...'他的声音有一丝不易察觉的颤抖。'和那天一模一样的风铃...'",
+        mood: "震惊",
+        choices: [
+            {
+                text: "安静地观察他的反应",
+                next: "watch_reaction"
+            },
+            {
+                text: "轻声问：'喜欢吗？'",
+                next: "ask_opinion"
+            }
+        ]
+    },
+    // 结局部分
+    watch_reaction: {
+        text: "'这个礼物...'阿散的手指轻轻抚过风铃表面，'你是怎么找到的？'他抬起头，蓝紫色的眼眸中闪烁着难得一见的柔和光芒。'这不是普通的风铃。'",
+        mood: "感动",
+        choices: [
+            {
+                text: "如实回答：'走遍了很多地方。'",
+                next: "explain_effort"
+            },
+            {
+                text: "微笑：'因为知道你会喜欢。'",
+                next: "express_care"
+            }
+        ]
+    },
+
+    explain_effort: {
+        text: "'多管闲事。'阿散别过头去，但耳尖却微微泛红，'为了这种事情浪费时间...'他的手却紧紧握着风铃，显然十分珍惜。'不过...谢谢。'最后两个字，轻得几乎听不见。",
+        mood: "害羞",
+        choices: [
+            {
+                text: "微笑：'只要你喜欢，就值得。'",
+                next: "final_worth"
+            },
+            {
+                text: "轻声说：'明年还会准备的。'",
+                next: "future_promise"
+            }
+        ]
+    },
+
+    final_worth: {
+        text: "阿散沉默片刻，突然轻声说道：'下次...'他顿了顿，'不必这么费心。'话虽如此，但他的目光始终没有离开风铃，嘴角甚至浮现出一丝几不可见的笑意。",
+        mood: "温柔",
+        choices: [
+            {
+                text: "承诺：'明年的礼物会更特别。'",
+                next: "future_promise"
+            },
+            {
+                text: "静静陪在他身边",
+                next: "quiet_company"
+            }
+        ]
+    },
+
+    future_promise: {
+        text: "'呵，'阿散轻笑一声，'你倒是敢说。'他小心地将风铃挂在窗边，清脆的声响在风中荡漾。'不过...'声音突然变得极轻，'我也许会期待一下。'",
+        mood: "期待",
+        choices: [
+            {
+                text: "道别：'那我先告辞了。'",
+                next: "gentle_farewell"
+            },
+            {
+                text: "提议：'要不要一起去看看晨光？'",
+                next: "morning_invitation"
+            }
+        ]
+    },
+
+    gentle_farewell: {
+        text: "阿散点点头，没有挽留。但就在你转身的瞬间，似乎听到他极轻的一句话：'谢谢。'那声音轻得像是清晨的风，却足以让这一天变得格外温暖。",
+        mood: "温暖",
+        choices: [
+            {
+                text: "带着微笑离开",
+                next: "final_scene"
+            }
+        ]
+    },
+
+    morning_invitation: {
+        text: "阿散愣了一下，随即轻哼一声：'随你便。'他小心地确认风铃已经挂好，迈步走到你身边。晨光洒在他的侧脸上，勾勒出一个淡淡的微笑。",
+        mood: "愉悦",
+        choices: [
+            {
+                text: "一同走向晨光中的须弥城",
+                next: "final_scene"
+            }
+        ]
+    },
+
+    final_scene: {
+        text: "风铃在晨风中发出清脆的响声，仿佛在见证这个特别的时刻。一年前，你给予了流浪者一个名字——阿散。而今天，这个名字的主人终于露出了真心的微笑。这份珍贵的回忆，将永远留在须弥的晨光里。",
+        mood: "温柔",
+        choices: [
+            {
+                text: "重新开始",
+                next: "start"
+            }
+        ]
+    }
+};
+// 游戏状态管理
+let gameState = {
+    affection: 0,
+    currentScene: 'start',
+    choicesMade: []
+};
+
+function updateScene(sceneName) {
+    const scene = dialogueData[sceneName];
+    if (!scene) return;
+
+    gameState.currentScene = sceneName;
+    gameState.choicesMade.push(sceneName);
+
+    const dialogueText = document.getElementById('dialogue-text');
+    const moodIndicator = document.getElementById('mood-indicator');
+
+    // 淡出效果
+    dialogueText.style.opacity = 0;
+    moodIndicator.style.opacity = 0;
+
+    // 更新内容并淡入
+    setTimeout(() => {
+        dialogueText.innerHTML = scene.text;
+        moodIndicator.innerHTML = `心情：${scene.mood}`;
+        dialogueText.style.opacity = 1;
+        moodIndicator.style.opacity = 1;
+    }, 300);
+
+    updateChoices(scene.choices);
+}
+
+function updateChoices(choices) {
+    const container = document.getElementById('choices-container');
+    container.innerHTML = '';
+
+    // 添加选项按钮
+    choices.forEach((choice, index) => {
+        const button = document.createElement('button');
+        button.className = 'choice-btn fade-in';
+        button.style.animationDelay = `${index * 0.1}s`;
+        button.textContent = choice.text;
+        button.onclick = () => {
+            // 点击音效
+            playClickSound();
+            // 更新场景
+            updateScene(choice.next);
+        };
+        container.appendChild(button);
+    });
+
+    // 添加重新开始按钮（除了开始场景）
+    if (gameState.currentScene !== 'start') {
+        const resetBtn = document.createElement('button');
+        resetBtn.id = 'reset-button';
+        resetBtn.className = 'choice-btn';
+        resetBtn.textContent = '重新开始';
+        resetBtn.onclick = resetGame;
+        container.appendChild(resetBtn);
+    }
+}
+
+// 重置游戏状态
+function resetGame() {
+    gameState = {
+        affection: 0,
+        currentScene: 'start',
+        choicesMade: []
+    };
+    updateScene('start');
+}
+
+// 点击音效（可选）
+function playClickSound() {
+    // 如果需要添加音效，可以在这里实现
+    // const audio = new Audio('path/to/click.mp3');
+    // audio.play();
+}
+
+// 页面加载完成后初始化游戏
+document.addEventListener('DOMContentLoaded', () => {
+    updateScene('start');
+});
+</script>
+
+</body>
+</html>
