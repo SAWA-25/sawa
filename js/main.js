@@ -1,3 +1,19 @@
+// 粒子效果初始化
+particlesJS.load('particles-js', 'particles.json', function() {
+    console.log('particles.js loaded - callback');
+});
+
+// 打字效果
+new Typed('#typed-title', {
+    strings: ['AI角色卡资源站', '探索无限可能的角色世界'],
+    typeSpeed: 100,
+    backSpeed: 50,
+    loop: true
+});
+
+// 初始化WOW动画
+new WOW().init();
+
 const characters = [
     {
         id: 'scaramouche',
@@ -17,7 +33,7 @@ function renderCharacters(filteredChars = characters) {
 
     filteredChars.forEach(char => {
         const card = document.createElement('div');
-        card.classList.add('character-card');
+        card.classList.add('character-card', 'wow', 'fadeInUp');
         card.innerHTML = `
             <img src="${char.image}" alt="${char.name}">
             <div class="character-card-content">
