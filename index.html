@@ -3,23 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI角色卡下载站</title>
+    <title>AI角色卡资源站</title>
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
-    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
+    <div id="particles-js"></div>
+
     <header>
         <div class="container">
-            <h1>AI角色卡资源站</h1>
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="搜索角色...">
-                <button onclick="searchCharacters()"><i class="fas fa-search"></i></button>
+            <h1 id="typed-title"></h1>
+            <div class="search-container wow fadeInUp">
+                <input type="text" id="searchInput" placeholder="搜索你喜欢的角色...">
+                <button onclick="searchCharacters()">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
         </div>
     </header>
 
     <main class="container">
-        <div class="filter-container">
+        <div class="filter-container wow fadeInLeft">
             <select id="categoryFilter">
                 <option value="all">全部分类</option>
                 <option value="game">游戏角色</option>
@@ -44,6 +49,9 @@
         <p>© 2024 AI角色卡资源站 | Powered by GitHub Pages</p>
     </footer>
 
+    <script src="js/particles.min.js"></script>
+    <script src="js/typed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow.js/1.2.1/wow.min.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
