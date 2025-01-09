@@ -1,57 +1,15 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI角色卡资源站</title>
-    <link rel="stylesheet" href="css/animate.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="css/styles.css">
+    <title>文件下载页面</title>
 </head>
 <body>
-    <div id="particles-js"></div>
-
-    <header>
-        <div class="container">
-            <h1 id="typed-title"></h1>
-            <div class="search-container wow fadeInUp">
-                <input type="text" id="searchInput" placeholder="搜索你喜欢的角色...">
-                <button onclick="searchCharacters()">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <main class="container">
-        <div class="filter-container wow fadeInLeft">
-            <select id="categoryFilter">
-                <option value="all">全部分类</option>
-                <option value="game">游戏角色</option>
-                <option value="anime">动漫角色</option>
-                <option value="original">原创角色</option>
-            </select>
-        </div>
-
-        <div id="characterGallery" class="gallery">
-            <!-- 角色卡将通过JS动态生成 -->
-        </div>
-    </main>
-
-    <div id="characterModal" class="modal">
-        <div class="modal-content">
-            <span class="close">×</span>
-            <div id="modalDetails"></div>
-        </div>
-    </div>
-
-    <footer>
-        <p>© 2024 AI角色卡资源站 | Powered by GitHub Pages</p>
-    </footer>
-
-    <script src="js/particles.min.js"></script>
-    <script src="js/typed.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow.js/1.2.1/wow.min.js"></script>
-    <script src="js/main.js"></script>
+    <h1>欢迎下载文件</h1>
+    <ul>
+        <li><a href="/downloads/example1.zip" download>下载 Example1.zip</a></li>
+        <li><a href="/downloads/example2.pdf" download>下载 Example2.pdf</a></li>
+    </ul>
 </body>
 </html>
