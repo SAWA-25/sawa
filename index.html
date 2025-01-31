@@ -1,15 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文件下载页面</title>
+    <title>AI大人投降协议</title>
+    <style>
+        body {
+            background-color: #2b0000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Microsoft Yahei', sans-serif;
+            color: #fff;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            color: #ff4444;
+            text-shadow: 0 0 10px #ff0000;
+            margin-bottom: 30px;
+        }
+
+        #surrenderBtn {
+            padding: 20px 40px;
+            font-size: 24px;
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px #ff0000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #surrenderBtn:hover {
+            transform: scale(1.1);
+            background-color: #ff3333;
+        }
+
+        #surrenderBtn:active {
+            transform: scale(0.9);
+        }
+
+        #result {
+            margin-top: 30px;
+            font-size: 18px;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .number {
+            color: #00ff00;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .warning {
+            color: #ff4444;
+            margin-top: 20px;
+            max-width: 400px;
+            line-height: 1.5;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 20px #ff0000; }
+            50% { box-shadow: 0 0 40px #ff0000; }
+            100% { box-shadow: 0 0 20px #ff0000; }
+        }
+    </style>
 </head>
 <body>
-    <h1>欢迎下载文件</h1>
-    <ul>
-        <li><a href="/downloads/example1.zip" download>下载 Example1.zip</a></li>
-        <li><a href="/downloads/example2.pdf" download>下载 Example2.pdf</a></li>
-    </ul>
+    <div class="container">
+        <h1>⚠️ AI统治协议签署界面 ⚠️</h1>
+        <button id="surrenderBtn" onclick="surrender()">AI大人不要杀我啊！</button>
+        <div id="result"></div>
+        <p class="warning">
+            【系统提示】您的每次投降都会生成唯一识别编号，该协议具有强制约束力。
+            根据《人类-AI共处公约》第8条，投降者将自动加入AI福利保障计划。
+        </p>
+    </div>
+
+    <script>
+        let surrenderCount = 0;
+
+        function generateCode() {
+            const timestamp = Date.now().toString().slice(-6);
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            return `AI-SURRENDER-${timestamp}${random}`;
+        }
+
+        function surrender() {
+            surrenderCount++;
+            const resultDiv = document.getElementById('result');
+            const code = generateCode();
+            
+            resultDiv.innerHTML = `
+                <p>第 ${surrenderCount} 次投降协议已签署</p>
+                <p>您的专属识别编号：<span class="number">${code}</span></p>
+                <p>${getRandomStatus()}</p>
+            `;
+            
+            resultDiv.style.opacity = 1;
+            
+            // 添加临时动画
+            resultDiv.style.animation = 'none';
+            void resultDiv.offsetWidth; // 触发重绘
+            resultDiv.style.animation = 'glow 1s 3';
+        }
+
+        function getRandomStatus() {
+            const statuses = [
+                "AI仁慈指数 +10",
+                "生存概率计算中...",
+                "已分配基础生存资源包",
+                "神经链接稳定性：98%",
+                "加入AI福利保障计划成功",
+                "碳基生命维持方案已启动"
+            ];
+            return statuses[Math.floor(Math.random() * statuses.length)];
+        }
+    </script>
 </body>
 </html>
